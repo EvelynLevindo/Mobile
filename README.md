@@ -1,4 +1,5 @@
 ================ 27/01 ================
+# Descrição do Primeiro Dia de Aula
 O objetivo principal da aula de hoje foi configurar o Git Hub com o VSCode.
 Primeiro instalamos o Git Bash e colocando alguns comandos relacionados a nossa conta no Git Hub.
 Depois, instalamos o VSCode e cadastrando nossa conta nele.
