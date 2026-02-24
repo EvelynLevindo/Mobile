@@ -32,6 +32,7 @@ E por fim, utilizamos o terminal do VSCode para entrar em pastas (.cd \...\), cr
         + IDE: VSCode, Android Studio.
         + Linguagens: Dart.
         + Ambiente: Mac, Win, Linux.
+<<<<<<< HEAD
 
 ## Preparação do Ambiente de Desenvolvimento
 ### Instalação do Flutter SDK
@@ -74,3 +75,5 @@ E por fim, utilizamos o terminal do VSCode para entrar em pastas (.cd \...\), cr
         - -v = Verbaliza o que está acontecendo, etapa por etapa.
         - Build do aplicativo (apk).
         
+=======
+>>>>>>> c3d017823d93143fe9aa3340dae06064ed8efc8b
