@@ -74,6 +74,14 @@ E por fim, utilizamos o terminal do VSCode para entrar em pastas (.cd \...\), cr
     - flutter run -v
         - -v = Verbaliza o que está acontecendo, etapa por etapa.
         - Build do aplicativo (apk).
-        
-=======
->>>>>>> c3d017823d93143fe9aa3340dae06064ed8efc8b
+
+- Gerenciamento de dependências do PubSpec ()
+    - Instalação.
+        - Flutter pub add nome_dependencia
+    - Baixar e instalar dependências projetadas.
+        - Flutter pub get
+    - Outros comandos do flutter pub (dependências).
+        - Flutter pub outdated (verifica se as dependências estão desatualizadas).
+        - Flutter pub upgrade (atualiza as dependências do flutter pub).
+
+================ 03/03 ================
