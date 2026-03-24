@@ -105,6 +105,6 @@ E por fim, utilizamos o terminal do VSCode para entrar em pastas (.cd \...\), cr
             FAButton["FAButton"]
             SnackBar["SnackBar"]
         end
-        MaterialApp -> Janelas
-        Janelas -> Scaffold            
+        MaterialApp --> Janelas
+        Janelas --> Scaffold            
     ```
