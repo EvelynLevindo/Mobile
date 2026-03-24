@@ -75,7 +75,7 @@ E por fim, utilizamos o terminal do VSCode para entrar em pastas (.cd \...\), cr
         - -v = Verbaliza o que está acontecendo, etapa por etapa.
         - Build do aplicativo (apk).
 
-- Gerenciamento de dependências do PubSpec ()
+- Gerenciamento de Dependências do PubSpec ()
     - Instalação.
         - Flutter pub add nome_dependencia
     - Baixar e instalar dependências projetadas.
@@ -84,4 +84,27 @@ E por fim, utilizamos o terminal do VSCode para entrar em pastas (.cd \...\), cr
         - Flutter pub outdated (verifica se as dependências estão desatualizadas).
         - Flutter pub upgrade (atualiza as dependências do flutter pub).
 
-================ 03/03 ================
+================ 24/03 ================
+
+## Estrutura Básica de um Aplictivo em Flutter
+
+### Árvore de Widgets
+    ```mermaid
+    flowchart TD
+        subgraph MaterialApp["MaterialApp"]
+        end
+        subgraph Janelas["Janelas"]
+            StateLess["StateLess"]
+            StateFull["StateFull"]
+        end
+        subgraph Scaffold["Scaffold"]
+            AppBar["Appbar"]
+            Body["Body"]
+            BNBar["BNBar"]
+            Drawer["Drawer"]
+            FAButton["FAButton"]
+            SnackBar["SnackBar"]
+        end
+        MaterialApp -> Janelas
+        Janelas -> Scaffold            
+    ```
