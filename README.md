@@ -89,7 +89,7 @@ E por fim, utilizamos o terminal do VSCode para entrar em pastas (.cd \...\), cr
 ## Estrutura Básica de um Aplictivo em Flutter
 
 ### Árvore de Widgets
-    ```mermaid
+```mermaid
     flowchart TD
         subgraph MaterialApp["MaterialApp"]
         end
@@ -106,5 +106,5 @@ E por fim, utilizamos o terminal do VSCode para entrar em pastas (.cd \...\), cr
             SnackBar["SnackBar"]
         end
         MaterialApp --> Janelas
-        Janelas --> Scaffold            
-    ```
+        Janelas --> Scaffold
+```
