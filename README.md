@@ -89,7 +89,7 @@ E por fim, utilizamos o terminal do VSCode para entrar em pastas (.cd \...\), cr
 ## Estrutura Básica de um Aplictivo em Flutter
 
 ### Árvore de Widgets
-    ```mermaid
+```mermaid
     flowchart TD
         subgraph MaterialApp["MaterialApp"]
         end
@@ -107,4 +107,22 @@ E por fim, utilizamos o terminal do VSCode para entrar em pastas (.cd \...\), cr
         end
         MaterialApp --> Janelas
         Janelas --> Scaffold            
-    ```
+```
+
+### Tipos de Janelas
+- Stateless:
+    Janelas Imatáveis - Uma vez construída ela não se altera.
+    OBS: Pode ter movimento (GIFs, Movies, Carrossel, Cards, etc), mas não dá para alterar as imagens, os vídeos e os elementos de movimento depois de montados.
+
+- StateFull:
+    Janelas que permitem mudanças de estado (setState).
+    OBS: Permite adicionar elementos na janela, como novas imagens, textos entre outros.
+
+- Comparativo entre Stateless e Stateful
+
+| Caracteristica | Stateless | Stateful |
+| --- | --- | --- |
+|Mutabilidade| Não | Sim |
+|Uso Ideal | Layouts Fixo e Exibição de dados Estáticos | Interações do Usuários, Animações e Dados Dinâmicos|
+|Armazenamento de Estado| Não | Sim |
+| Método Principal | build() | build()+setState() |
