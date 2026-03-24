@@ -106,6 +106,7 @@ E por fim, utilizamos o terminal do VSCode para entrar em pastas (.cd \...\), cr
             SnackBar["SnackBar"]
         end
         MaterialApp --> Janelas
+<<<<<<< HEAD
         Janelas --> Scaffold            
 ```
 
@@ -126,3 +127,7 @@ E por fim, utilizamos o terminal do VSCode para entrar em pastas (.cd \...\), cr
 |Uso Ideal | Layouts Fixo e Exibição de dados Estáticos | Interações do Usuários, Animações e Dados Dinâmicos|
 |Armazenamento de Estado| Não | Sim |
 | Método Principal | build() | build()+setState() |
+=======
+        Janelas --> Scaffold
+```
+>>>>>>> 43f47182f4d33e96aaccd57561edf4de5fb62709
