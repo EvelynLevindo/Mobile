@@ -2,85 +2,116 @@
 import 'package:flutter/material.dart';
 
 void main(List<String> args) {
-  runApp(MaterialApp(
-    debugShowCheckedModeBanner: false,
-    home: ToDoList(),
-  ));
+  runApp(
+    MaterialApp(
+      debugShowCheckedModeBanner: false, // Remove a flag do debug
+      home: ToDoList(),
+    ),
+  );
 }
 
 // st --> snipets (atalhos para código)
-//  Janela do aplicativo
-// 1ª Classe, identifica a mudança de estado --> Chama o build
+// Janela do aplicativvo
+// 1º classe identifica a mudança de estado => chama o build
 class ToDoList extends StatefulWidget {
   const ToDoList({super.key});
 
-  @override
+  @override // Chama o rebuild da tela
   State<ToDoList> createState() => _ToDoListState();
 }
 
-// 2ª Classe --> Lógica da construção da janela
+//2º class --> Lógica da construção da janela
 class _ToDoListState extends State<ToDoList> {
-
   // Atributos
   // Final --> Permite a mudança de valor uma única vez (escopo da variável)
-  // O uso do underline (_), transforma a varável em private
-  final TextEditingController _tarefaController = TextEditingController();
-  final List<Map<String,dynamic>> _tarefas = []; // Uma coleção de Chave - Valor
+  // O uso do underLine (_), transforma a variável em private
+  final TextEditingController _tarefaController =
+      TextEditingController(); // Pega o valor do input
+  final List<Map<String, dynamic>> _tarefas =
+      []; // Lista do tipo coleção (Chave, Valor)
 
   // Métodos
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Lista de Tarefas"), centerTitle: true,),
+      appBar: AppBar(
+        title: Text("Lista de Tarefas"),
+        centerTitle: true,
+      ), // Centraliza o texto no meio da Appbar
       body: Padding(
-        // Espaçamento geral 8px
+        // Espaçamento geral de 8px
         padding: EdgeInsets.all(8),
         child: Column(
           children: [
             // Input para adicionar novas tarefas
             TextField(
-              controller: _tarefaController, // Passa o valor do texto para o controller
-              decoration: InputDecoration(
-                labelText: "Digite uma Tarefa"
-              ),
+              controller:
+                  _tarefaController, // Passa o valor do texto para o controller
+              decoration: InputDecoration(labelText: "Digite uma Tarefa"),
             ),
-            
-            SizedBox(height: 10,), // Espaçameno de altura
-            ElevatedButton( // Botão para aicionar tarefa
-              onPressed: _adicionarTarefa, 
-              child: Text("Adicionar Tarefa")),
+            SizedBox(height: 10), // Espaçamento de altura
+            ElevatedButton(
+              // Botão para adicioanr tarefa
+              onPressed: _adicionarTarefa,
+              child: Text("Adicioanr Tarefa"),
+            ),
             // Campo para listar as tarefas
             Expanded(
-              // Listar tarefas da coleção
-              child: ListView.builder( // Conta o número de itens na lista
-                itemCount: _tarefas.length,
-                itemBuilder: (context,index)=>
-                  // Exibe o elemento da lista
-                  ListTile(
-                    title: Text(_tarefas[index]["titulo"], style: TextStyle(
-                      // Operador Ternário (if, else) --> Se a tarefa for concluída, coloca um risco no texto
-                      decoration: _tarefas[index]["concluída"] ? TextDecoration.lineThrough : null
-                    ),),
-                    leading: Checkbox( // Permite mudar o valor da tarefa para concluída ou o contrário
-                      value: _tarefas[index]["concluída"], 
-                      onChanged: (bool? valor)=> setState(() {
-                        _tarefas[index]["concluídas"] = valor!;
-                      })),
-                  )
+              //Listar as Tarefas da Coleção
+              child: ListView.builder(
+                itemCount: _tarefas.length, // Conta o número de item na lista
+                itemBuilder: (context, index) =>
+                    // Exibe o elemento da lista
+                    ListTile(
+                      title: Text(
+                        _tarefas[index]["titulo"],
+                        style: TextStyle(
+                          // Operador Ternário (if,else) --> se tarefa concluida, coloca um risco no texto
+                          decoration: _tarefas[index]["concluida"]
+                              ? TextDecoration.lineThrough
+                              : null,
+                        ),
+                      ),
+                      leading: Checkbox(
+                        // Permite mudar o valor da tarefa para concluida ou o contrário
+                        value: _tarefas[index]["concluida"],
+                        onChanged: (bool? valor) => setState(() {
+                          // Chamando a mudança de estado
+                          _tarefas[index]["concluida"] = valor!;
+                        }),
+                      ),
+                      // Coloquem um icone( de lixeira), ao ser clicado vai deletar a tarefa
+                      // Usar o trailing para colocar o icone da lixeira
+                      trailing: ElevatedButton(
+                        onPressed: () => _deletarTarefa,
+                        child: Icon(Icons.delete),
+                      ),
+                    ),
               ),
             ),
           ],
-        ),),
+        ),
+      ),
     );
   }
-  // Método par adicionar tarefa na lista
+
+  // Método para adicionar tarefa na lista
   void _adicionarTarefa() {
-    if(_tarefaController.text.trim().isNotEmpty){
+    if (_tarefaController.text.trim().isNotEmpty) {
       setState(() {
+        // Chama a mudança de estado da janela
         // Adiciona a tarefa na lista
-        _tarefas.add({"titulo":_tarefaController.text,"concluida":false});
+        _tarefas.add({"titulo": _tarefaController.text, "concluida": false});
         // Limpa o campo do input
         _tarefaController.clear();
+      });
+    }
+  }
+
+  void _deletarTarefa(int index) {
+    if(_tarefas[index]["concluida"]){
+      setState(() {
+        _tarefas.removeAt(index);
       });
     }
   }
