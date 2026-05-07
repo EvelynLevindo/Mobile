@@ -28,6 +28,7 @@ class _Exemplo1PageState extends State<Exemplo1Page> {
   _carregarNomeShared() async { // Função assincrona --> o progrma continua rodando sem a necessidade de parar, evitando erros
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
+      // Atribuindo a variável o valor relacionado a chave buscada no shared
       _nomeSalvo = prefs.getString("nome") ?? ""; // Operador de nulidade
     });
   }
