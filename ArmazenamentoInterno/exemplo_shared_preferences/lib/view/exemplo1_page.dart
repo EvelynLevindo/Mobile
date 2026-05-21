@@ -34,7 +34,8 @@ class _Exemplo1PageState extends State<Exemplo1Page> {
   }
 
   // Início da página
-  @override
+  @override // Função padrão subscrita
+  // Método iníciado antes mesmo da construção da tela
   void initState() { // Carrega informações do Shared Preferences antes de construir a tela pela primeira vez
     // TODO: implement initState
     super.initState();
@@ -48,6 +49,7 @@ class _Exemplo1PageState extends State<Exemplo1Page> {
       body: Padding(
         padding: EdgeInsets.all(8),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             TextField(
               controller: _nomeInput,
