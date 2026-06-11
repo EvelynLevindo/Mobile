@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../controllers/workout_controller.dart';
 import '../models/routine.dart';
-import 'add_exercise_screen.dart';
+import 'add_exercise_views.dart';
 
 class RoutineDetailScreen extends StatefulWidget {
   final Routine routine;

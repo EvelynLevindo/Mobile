@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import '../controllers/workout_controller.dart';
 import '../models/routine.dart';
-import 'add_routine_screen.dart';
-import 'routine_detail_screen.dart';
+import 'add_routine_views.dart';
+import 'routine_detail_views.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);

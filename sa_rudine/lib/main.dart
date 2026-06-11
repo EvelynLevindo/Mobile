@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'screens/home_screen.dart';
+import 'views/home_views.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
