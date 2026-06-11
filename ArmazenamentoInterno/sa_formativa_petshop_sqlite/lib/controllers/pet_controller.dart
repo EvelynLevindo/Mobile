@@ -1,7 +1,7 @@
 import 'package:sa_formativa_petshop_sqlite/model/pet_model.dart';
 import 'package:sa_formativa_petshop_sqlite/service/database_helper.dart';
 
-class PetController {
+class PetController { //SlinControllers
   // atributo para estabelecer conexão com o banco
   final _dbHelper = DatabaseHelper();
 
@@ -11,4 +11,6 @@ class PetController {
 
   //Listar Todos os Pets
   Future<List<Pet>> listarTodos() async => _dbHelper.getPets();
+
+
 }

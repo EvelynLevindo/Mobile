@@ -6,6 +6,8 @@ class Pet{
   String nomeDono;
   String telefone;
 
+  //Atributos públicos, se fossem privados, precisaria dos getter and setter (métodos públicos ) => encapsulamento //SAEP
+
   //construtor
   Pet({this.id, required this.nome, required this.raca, required this.nomeDono, required this.telefone});
 

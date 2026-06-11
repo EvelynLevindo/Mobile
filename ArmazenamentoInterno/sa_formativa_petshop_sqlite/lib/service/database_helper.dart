@@ -4,11 +4,11 @@ import 'package:sa_formativa_petshop_sqlite/model/pet_model.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DatabaseHelper {
-  //classe do tipo singleton ( permite o instanciamento de um inico obj por vez)
+  //classe do tipo singleton ( permite o instanciamento de um único obj por vez)
   static final DatabaseHelper _instance = DatabaseHelper._internal();
 
   // essa não possui um construtor normal
-  //ele Precisa do factory para estabelece a conexão com o banco de dados,
+  //ele Precisa do factory para estabelece a conexão com o banco de dados, 
   DatabaseHelper._internal();
   factory DatabaseHelper() => _instance;
 
@@ -18,27 +18,28 @@ class DatabaseHelper {
   Database? _database; //Privado
 
   //método get da Conexão
-  Future<Database> get database async {
-    if (_database != null)
-      return _database!; // se conexão ja existir  retrona a conexão existente
+  Future<Database> get database async{
+    if(_database != null) return _database!; // se conexão ja existir  retrona a conexão existente
     _database = await _initDb(); // se não existir inicia uma nova
     return _database!;
   }
 
-  Future<Database> _initDb() async {
+  Future<Database> _initDb() async{
     // começar a conexão com o banco
     String path = join(await getDatabasesPath(), "petshop_db");
     return await openDatabase(
       path,
       version: 1,
       // a primeira vez que for rodar o banco , cria as tabelas
-      onCreate: (db, version) async {
-        await db.execute('''CREATE TABLE pets(
+      onCreate: (db, version) async{
+        await db.execute(
+          '''CREATE TABLE pets(
           id INTEGER PRIMARY KEY AUTOINCREMENT, 
           nome TEXT, raca TEXT, 
           nomeDono TEXT, 
           telefone TEXT)''');
-        await db.execute('''CREATE TABLE consultas(
+        await db.execute(
+          '''CREATE TABLE consultas(
           id INTEGER PRIMARY KEY AUTOINCREMENT, 
           petId INTEGER, 
           tipoServico TEXT, 
@@ -46,40 +47,29 @@ class DatabaseHelper {
           observacoes TEXT,
           FOREIGN KEY(petId) REFERENCES pets(id) ON DELETE CASCADE)''');
       },
-      onConfigure: (db) async => await db.execute(
-        "PRAGMA foreign_key = ON",
-      ), //garante o delete on CASCADE
-    );
+      onConfigure: (db) async => await db.execute("PRAGMA foreign_key = ON"), //garante o delete on CASCADE
+      );
   }
 
-  //métodos do CRUD Simplificados
+  //métodos do APIREST Simplificados
 
-  //inserir pet
-  Future<int> insertPet(Pet pet) async =>
-      (await database).insert("pets", pet.toMap());
+  //inserir pet //POST
+  Future<int> insertPet(Pet pet) async => (await database).insert("pets", pet.toMap());
 
-  //Listar Pets do DB
+  //Listar Pets do DB //GET
   Future<List<Pet>> getPets() async {
     //busca os pets no banco e retrona uma lista em ordem alfabetica
-    final List<Map<String, dynamic>> maps = await (await database).query(
-      "pets",
-      orderBy: "nome ASC",
-    );
+    final List<Map<String, dynamic>> maps = await (await database).query("pets", orderBy: "nome ASC");
     return List.generate(maps.length, (e) => Pet.fromMap(maps[e]));
   }
 
-  // inserir Consulta
-  Future<int> insertConsulta(Consulta c) async =>
-      (await database).insert("consultas", c.toMap());
+  // inserir Consulta//POST
+  Future<int> insertConsulta(Consulta c) async => (await database).insert("consultas", c.toMap());
 
-  //Get Consulta por Pet
-  Future<List<Consulta>> getConsultaPorPet(int petId) async {
-    final List<Map<String, dynamic>> maps = await (await database).query(
-      "consultas",
-      where: "petId = ?",
-      whereArgs: [petId],
-      orderBy: "dataHora DESC",
-    );
-    return List.generate(maps.length, (e) => Consulta.fromMap(maps[e]));
+  //Get Consulta por Pet //GET
+  Future<List<Consulta>> getConsultaPorPet(int petId) async{
+    final List<Map<String,dynamic>> maps = await (await database).query("consultas", where: "petId = ?", whereArgs: [petId], orderBy: "dataHora DESC" );
+    return List.generate(maps.length, (e)=>Consulta.fromMap(maps[e]));
   }
+
 }
