@@ -5,21 +5,32 @@ import '../models/exercise.dart';
 class AddExerciseScreen extends StatefulWidget {
   final int routineId;
   final WorkoutController controller;
+  final Exercise? exercise; // Se for nulo, é cadastro. Se não, é edição.
 
-  const AddExerciseScreen({Key? key, required this.routineId, required this.controller}) : super(key: key);
+  const AddExerciseScreen({super.key, required this.routineId, required this.controller, this.exercise});
 
   @override
-  _AddExerciseScreenState createState() => _AddExerciseScreenState();
+  State<AddExerciseScreen> createState() => _AddExerciseScreenState();
 }
 
 class _AddExerciseScreenState extends State<AddExerciseScreen> {
   final _formKey = GlobalKey<FormState>();
   
-  final _nameController = TextEditingController();
-  final _setsController = TextEditingController();
-  final _repsController = TextEditingController();
-  final _weightController = TextEditingController();
-  final _typeController = TextEditingController();
+  late final TextEditingController _nameController;
+  late final TextEditingController _setsController;
+  late final TextEditingController _repsController;
+  late final TextEditingController _weightController;
+  late final TextEditingController _typeController;
+
+  @override
+  void initState() {
+    super.initState();
+    _nameController = TextEditingController(text: widget.exercise?.name ?? '');
+    _setsController = TextEditingController(text: widget.exercise?.sets.toString() ?? '');
+    _repsController = TextEditingController(text: widget.exercise?.reps.toString() ?? '');
+    _weightController = TextEditingController(text: widget.exercise?.weight.toString() ?? '');
+    _typeController = TextEditingController(text: widget.exercise?.type ?? '');
+  }
 
   @override
   void dispose() {
@@ -33,8 +44,10 @@ class _AddExerciseScreenState extends State<AddExerciseScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isEditing = widget.exercise != null;
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Novo Exercício')),
+      appBar: AppBar(title: Text(isEditing ? 'Editar Exercício' : 'Novo Exercício')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -44,7 +57,7 @@ class _AddExerciseScreenState extends State<AddExerciseScreen> {
               TextFormField(
                 controller: _nameController,
                 decoration: const InputDecoration(labelText: 'Nome do Exercício (ex: Supino Reto)'),
-                validator: (value) => value == null || value.isEmpty ? 'Campo obrigatório' : null,
+                validator: (value) => value == null || value.trim().isEmpty ? 'Campo obrigatório' : null,
               ),
               const SizedBox(height: 16),
               Row(
@@ -55,7 +68,7 @@ class _AddExerciseScreenState extends State<AddExerciseScreen> {
                       decoration: const InputDecoration(labelText: 'Séries (ex: 3)'),
                       keyboardType: TextInputType.number,
                       validator: (value) {
-                        if (value == null || value.isEmpty) return 'Obrigatório';
+                        if (value == null || value.trim().isEmpty) return 'Obrigatório';
                         if (int.tryParse(value) == null) return 'Apenas inteiros';
                         return null;
                       },
@@ -68,7 +81,7 @@ class _AddExerciseScreenState extends State<AddExerciseScreen> {
                       decoration: const InputDecoration(labelText: 'Repetições (ex: 12)'),
                       keyboardType: TextInputType.number,
                       validator: (value) {
-                        if (value == null || value.isEmpty) return 'Obrigatório';
+                        if (value == null || value.trim().isEmpty) return 'Obrigatório';
                         if (int.tryParse(value) == null) return 'Apenas inteiros';
                         return null;
                       },
@@ -85,8 +98,7 @@ class _AddExerciseScreenState extends State<AddExerciseScreen> {
                       decoration: const InputDecoration(labelText: 'Carga em kg (ex: 20.5)'),
                       keyboardType: const TextInputType.numberWithOptions(decimal: true),
                       validator: (value) {
-                        if (value == null || value.isEmpty) return 'Obrigatório';
-                        // Troca vírgula por ponto para evitar erros de parse
+                        if (value == null || value.trim().isEmpty) return 'Obrigatório';
                         final normalizedValue = value.replaceAll(',', '.');
                         if (double.tryParse(normalizedValue) == null) return 'Apenas números';
                         return null;
@@ -98,7 +110,7 @@ class _AddExerciseScreenState extends State<AddExerciseScreen> {
                     child: TextFormField(
                       controller: _typeController,
                       decoration: const InputDecoration(labelText: 'Tipo (ex: Força, Cardio)'),
-                      validator: (value) => value == null || value.isEmpty ? 'Obrigatório' : null,
+                      validator: (value) => value == null || value.trim().isEmpty ? 'Obrigatório' : null,
                     ),
                   ),
                 ],
@@ -109,34 +121,37 @@ class _AddExerciseScreenState extends State<AddExerciseScreen> {
                   if (_formKey.currentState!.validate()) {
                     try {
                       final exercise = Exercise(
+                        id: widget.exercise?.id,
                         routineId: widget.routineId,
-                        name: _nameController.text,
-                        sets: int.parse(_setsController.text),
-                        reps: int.parse(_repsController.text),
-                        weight: double.parse(_weightController.text.replaceAll(',', '.')),
-                        type: _typeController.text,
+                        name: _nameController.text.trim(),
+                        sets: int.parse(_setsController.text.trim()),
+                        reps: int.parse(_repsController.text.trim()),
+                        weight: double.parse(_weightController.text.replaceAll(',', '.').trim()),
+                        type: _typeController.text.trim(),
                       );
                       
-                      await widget.controller.addExercise(exercise);
+                      if (isEditing) {
+                        await widget.controller.updateExercise(exercise);
+                      } else {
+                        await widget.controller.addExercise(exercise);
+                      }
                       
-                      if (mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Exercício salvo com sucesso!'), backgroundColor: Colors.green),
-                        );
-                        Navigator.pop(context); // Retorna para a tela de detalhes
-                      }
+                      if (!mounted) return;
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Exercício salvo com sucesso!'), backgroundColor: Colors.green),
+                      );
+                      Navigator.pop(context);
                     } catch (e) {
-                      if (mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Erro ao salvar o exercício.'), backgroundColor: Colors.red),
-                        );
-                      }
+                      if (!mounted) return;
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Erro ao salvar o exercício.'), backgroundColor: Colors.red),
+                      );
                     }
                   }
                 },
-                child: const Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: Text('Salvar Exercício', style: TextStyle(fontSize: 16)),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Text(isEditing ? 'Atualizar Exercício' : 'Salvar Exercício', style: const TextStyle(fontSize: 16)),
                 ),
               )
             ],
