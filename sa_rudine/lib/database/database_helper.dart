@@ -1,7 +1,7 @@
-import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
-import '../models/exercise.dart';
+import 'package:path/path.dart';
 import '../models/routine.dart';
+import '../models/exercise.dart';
 
 class DatabaseHelper {
   static final DatabaseHelper instance = DatabaseHelper._init();
@@ -22,8 +22,8 @@ class DatabaseHelper {
     return await openDatabase(
       path,
       version: 1,
+      onConfigure: _onConfigure, // Importante para o CASCADE funcionar
       onCreate: _createDB,
-      onConfigure: _onConfigure, // CRUCIAL: Ativa suporte a chaves estrangeiras cascata
     );
   }
 
@@ -54,7 +54,7 @@ class DatabaseHelper {
     ''');
   }
 
-  // --- CRUD: ROTINAS ---
+  // --- Operações para Rotinas (CRUD) ---
   Future<int> insertRoutine(Routine routine) async {
     final db = await instance.database;
     return await db.insert('routines', routine.toMap());
@@ -68,24 +68,15 @@ class DatabaseHelper {
 
   Future<int> updateRoutine(Routine routine) async {
     final db = await instance.database;
-    return await db.update(
-      'routines',
-      routine.toMap(),
-      where: 'id = ?',
-      whereArgs: [routine.id],
-    );
+    return await db.update('routines', routine.toMap(), where: 'id = ?', whereArgs: [routine.id]);
   }
 
   Future<int> deleteRoutine(int id) async {
     final db = await instance.database;
-    return await db.delete(
-      'routines',
-      where: 'id = ?',
-      whereArgs: [id],
-    );
+    return await db.delete('routines', where: 'id = ?', whereArgs: [id]);
   }
 
-  // --- CRUD: EXERCÍCIOS ---
+  // --- Operações para Exercícios (CRUD) ---
   Future<int> insertExercise(Exercise exercise) async {
     final db = await instance.database;
     return await db.insert('exercises', exercise.toMap());
@@ -93,30 +84,17 @@ class DatabaseHelper {
 
   Future<List<Exercise>> fetchExercises(int routineId) async {
     final db = await instance.database;
-    final result = await db.query(
-      'exercises',
-      where: 'routineId = ?',
-      whereArgs: [routineId],
-    );
+    final result = await db.query('exercises', where: 'routineId = ?', whereArgs: [routineId]);
     return result.map((json) => Exercise.fromMap(json)).toList();
   }
 
   Future<int> updateExercise(Exercise exercise) async {
     final db = await instance.database;
-    return await db.update(
-      'exercises',
-      exercise.toMap(),
-      where: 'id = ?',
-      whereArgs: [exercise.id],
-    );
+    return await db.update('exercises', exercise.toMap(), where: 'id = ?', whereArgs: [exercise.id]);
   }
 
   Future<int> deleteExercise(int id) async {
     final db = await instance.database;
-    return await db.delete(
-      'exercises',
-      where: 'id = ?',
-      whereArgs: [id],
-    );
+    return await db.delete('exercises', where: 'id = ?', whereArgs: [id]);
   }
 }
