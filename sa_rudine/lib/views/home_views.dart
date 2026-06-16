@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import '../controllers/workout_controller.dart';
-import '../models/routine.dart';
-import 'add_routine_views.dart';
-import 'routine_detail_views.dart';
+import 'add_routine_screen.dart';
+import 'routine_detail_screen.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
 
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
@@ -17,49 +16,66 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    _loadData();
-  }
-
-  Future<void> _loadData() async {
-    await _controller.loadRoutines();
-    setState(() {});
+    _controller.loadRoutines();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Minhas Rotinas')),
-      body: _controller.routines.isEmpty
-          ? const Center(child: Text('Nenhuma rotina cadastrada.'))
-          : ListView.builder(
-              itemCount: _controller.routines.length,
-              itemBuilder: (context, index) {
-                final routine = _controller.routines[index];
-                return Card(
-                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  child: ListTile(
-                    title: Text(routine.name, style: const TextStyle(fontWeight: FontWeight.bold)),
-                    subtitle: Text('Objetivo: ${routine.goal}'),
-                    trailing: const Icon(Icons.arrow_forward_ios),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => RoutineDetailScreen(routine: routine, controller: _controller),
-                        ),
-                      ).then((_) => _loadData());
-                    },
+      body: ListenableBuilder(
+        listenable: _controller,
+        builder: (context, _) {
+          if (_controller.routines.isEmpty) {
+            return const Center(child: Text('Nenhuma rotina cadastrada.'));
+          }
+          return ListView.builder(
+            itemCount: _controller.routines.length,
+            itemBuilder: (context, index) {
+              final routine = _controller.routines[index];
+              return Card(
+                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: ListTile(
+                  title: Text(routine.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+                  subtitle: Text('Objetivo: ${routine.goal}'),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.edit, color: Colors.blue),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => AddRoutineScreen(controller: _controller, routine: routine)),
+                          );
+                        },
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.delete, color: Colors.red),
+                        onPressed: () => _controller.deleteRoutine(routine.id!),
+                      ),
+                    ],
                   ),
-                );
-              },
-            ),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => RoutineDetailScreen(routine: routine, controller: _controller),
+                      ),
+                    );
+                  },
+                ),
+              );
+            },
+          );
+        },
+      ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          await Navigator.push(
+        onPressed: () {
+          Navigator.push(
             context,
             MaterialPageRoute(builder: (_) => AddRoutineScreen(controller: _controller)),
           );
-          _loadData();
         },
         child: const Icon(Icons.add),
       ),
