@@ -1,85 +1,74 @@
 import 'package:flutter/material.dart';
 import '../controllers/workout_controller.dart';
 import '../models/routine.dart';
-import 'add_exercise_views.dart';
+import 'add_exercise_screen.dart';
 
 class RoutineDetailScreen extends StatefulWidget {
   final Routine routine;
   final WorkoutController controller;
 
-  const RoutineDetailScreen({Key? key, required this.routine, required this.controller}) : super(key: key);
+  const RoutineDetailScreen({super.key, required this.routine, required this.controller});
 
   @override
-  _RoutineDetailScreenState createState() => _RoutineDetailScreenState();
+  State<RoutineDetailScreen> createState() => _RoutineDetailScreenState();
 }
 
 class _RoutineDetailScreenState extends State<RoutineDetailScreen> {
   @override
   void initState() {
     super.initState();
-    _loadExercises();
-  }
-
-  Future<void> _loadExercises() async {
-    if (widget.routine.id != null) {
-      await widget.controller.loadExercises(widget.routine.id!);
-      // Atualiza a interface após os exercícios serem carregados do banco de dados
-      setState(() {});
-    }
+    widget.controller.loadExercises(widget.routine.id!);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(widget.routine.name)),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(
-              'Objetivo: ${widget.routine.goal}',
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-          ),
-          const Divider(),
-          Expanded(
-            child: widget.controller.currentExercises.isEmpty
-                ? const Center(child: Text('Nenhum exercício cadastrado nesta rotina.'))
-                : ListView.builder(
-                    itemCount: widget.controller.currentExercises.length,
-                    itemBuilder: (context, index) {
-                      final exercise = widget.controller.currentExercises[index];
-                      return Card(
-                        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                        child: ListTile(
-                          leading: const Icon(Icons.fitness_center, color: Colors.blue),
-                          title: Text(exercise.name, style: const TextStyle(fontWeight: FontWeight.bold)),
-                          subtitle: Text(
-                            '${exercise.sets} séries x ${exercise.reps} reps | ${exercise.weight}kg\nTipo: ${exercise.type}',
-                          ),
-                          isThreeLine: true,
-                        ),
-                      );
-                    },
+      body: ListenableBuilder(
+        listenable: widget.controller,
+        builder: (context, _) {
+          if (widget.controller.currentExercises.isEmpty) {
+            return const Center(child: Text('Nenhum exercício nesta rotina.'));
+          }
+          return ListView.builder(
+            itemCount: widget.controller.currentExercises.length,
+            itemBuilder: (context, index) {
+              final exercise = widget.controller.currentExercises[index];
+              return Card(
+                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: ListTile(
+                  title: Text(exercise.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+                  subtitle: Text('${exercise.sets} séries x ${exercise.reps} reps | ${exercise.weight}kg\nTipo: ${exercise.type}'),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.edit, color: Colors.blue),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => AddExerciseScreen(routineId: widget.routine.id!, controller: widget.controller, exercise: exercise)),
+                          );
+                        },
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.delete, color: Colors.red),
+                        onPressed: () => widget.controller.deleteExercise(exercise.id!, widget.routine.id!),
+                      ),
+                    ],
                   ),
-          ),
-        ],
+                ),
+              );
+            },
+          );
+        },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          // Navega para a tela de adicionar exercício e aguarda o retorno
-          await Navigator.push(
+        onPressed: () {
+          Navigator.push(
             context,
-            MaterialPageRoute(
-              builder: (_) => AddExerciseScreen(
-                routineId: widget.routine.id!,
-                controller: widget.controller,
-              ),
-            ),
+            MaterialPageRoute(builder: (_) => AddExerciseScreen(routineId: widget.routine.id!, controller: widget.controller)),
           );
-          // Recarrega a lista de exercícios quando o usuário voltar
-          _loadExercises();
         },
         child: const Icon(Icons.add),
       ),
