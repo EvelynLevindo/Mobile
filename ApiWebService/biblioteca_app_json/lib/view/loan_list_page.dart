@@ -1,5 +1,4 @@
 import 'package:biblioteca_app_json/controller/loan_controller.dart';
-import 'package:biblioteca_app_json/model/loan_model.dart';
 import 'package:biblioteca_app_json/view/loan_form_page.dart';
 import 'package:flutter/material.dart';
 
@@ -35,7 +34,7 @@ class _LoanListPageState extends State<LoanListPage> {
           if (snapshot.hasError) {
             return Center(child: Text('Erro: ${snapshot.error}'));
           }
-          final loans = snapshot.data as List<EmprestimoModel>? ?? [];
+          final loans = snapshot.data ?? [];
           if (loans.isEmpty) {
             return const Center(child: Text('Nenhum empréstimo registrado'));
           }

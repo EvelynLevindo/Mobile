@@ -4,7 +4,6 @@ class LivroModel {
   final String autor;
   final bool status;
 
-
   LivroModel({
     this.id,
     required this.titulo,
@@ -14,15 +13,15 @@ class LivroModel {
 
   Map<String, dynamic> toMap() => {
     'id': id,
-    'titulo': titulo,
-    'autor': autor,
-    'status': status
+    'title': titulo,
+    'author': autor,
+    'avaliable': status
   };
 
   factory LivroModel.fromMap(Map<String, dynamic> map) => LivroModel(
-      id: map['id'],
-      titulo: map['titulo'], 
-      autor: map['autor'],
-      status: map['status'] == true ? true : false
+      id: map['id']?.toString(),
+      titulo: map['title']?.toString() ?? '', 
+      autor: map['author']?.toString() ?? '',
+      status: map['avaliable'] == true
   );
 }

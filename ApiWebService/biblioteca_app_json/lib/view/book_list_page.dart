@@ -1,5 +1,4 @@
 import 'package:biblioteca_app_json/controller/book_controller.dart';
-import 'package:biblioteca_app_json/model/book_model.dart';
 import 'package:biblioteca_app_json/view/book_form_page.dart';
 import 'package:flutter/material.dart';
 
@@ -30,7 +29,7 @@ class _BookListPageState extends State<BookListPage> {
           if (snapshot.hasError) {
             return Center(child: Text('Erro: ${snapshot.error}'));
           }
-          final books = snapshot.data as List<LivroModel>? ?? [];
+          final books = snapshot.data ?? [];
           if (books.isEmpty) {
             return const Center(child: Text('Nenhum livro cadastrado'));
           }

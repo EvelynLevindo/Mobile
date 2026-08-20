@@ -20,20 +20,19 @@ class EmprestimoModel {
 
   Map<String,dynamic> toMap() =>{
     "id":id,
-    "usuariorId":usuario.toMap(),
-    "livroId":livro.toMap(),
-    "startDate":startDate.toIso8601String(),
-    "dueDate":dueDate.toIso8601String(),
-    "returned":returned
+    "userId": usuario.id, // Enviar apenas o ID é o padrão de APIs REST
+    "bookId": livro.id,
+    "loanDate": startDate.toIso8601String(),
+    "returnDate": dueDate.toIso8601String(),
+    "returned": returned
   };
 
   factory EmprestimoModel.fromMap(Map<String,dynamic> map)=> 
   EmprestimoModel(
     id: map["id"].toString(),
-    usuario: UsuarioModel.fromMap(map["usuarioId"]),
-    livro: LivroModel.fromMap(map["livroId"]),
-    startDate: DateTime.parse(map["startDate"].toString()),
-    dueDate: DateTime.parse(map["dueDate"].toString()),
-    returned: map["returned"] == true ? true : false
+    usuario: UsuarioModel.fromMap(map["user"] ?? {}), // Requer parâmetro _expand=user na API
+    livro: LivroModel.fromMap(map["book"] ?? {}), // Requer parâmetro _expand=book na API
+    startDate: DateTime.parse(map["loanDate"].toString()),
+    dueDate: DateTime.parse(map["returnDate"].toString()),
+    returned: map["returned"] == true
   );
-}

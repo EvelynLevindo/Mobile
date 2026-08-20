@@ -2,7 +2,7 @@ import 'dart:convert'; // Biblioteca nativa do Json
 import 'package:http/http.dart' as http; // Importar biblioteca HTTP
 
 class ApiService {
-    static const String baseUrl = "http://localhost:3011"; // Url da base API
+    static const String baseUrl = "http://10.87.38.135:3011"; // Url da base API
 
     // Métodos de classe para acessar os Endpoint da API
     // GET - All

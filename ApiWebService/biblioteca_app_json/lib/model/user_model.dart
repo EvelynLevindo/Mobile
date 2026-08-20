@@ -11,13 +11,13 @@ class UsuarioModel {
 
   Map<String, dynamic> toMap() => {
     'id': id,
-    'nome': nome,
+    'name': nome, // Corrigido para 'name'
     'email': email
   };
 
   factory UsuarioModel.fromMap(Map<String, dynamic> map) => UsuarioModel(
     id: map['id'].toString(),
-    nome: map['nome'].toString(), 
-    email: map['map'].toString()
+    nome: map['name'].toString(), // Corrigido para 'name'
+    email: map['email'].toString() // Corrigido erro map['map']
   );
 }
