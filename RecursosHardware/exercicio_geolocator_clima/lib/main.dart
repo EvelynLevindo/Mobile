@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 import 'api_service.dart';
 
 void main() {
   runApp(const MaterialApp(
     home: MyApp(),
+    debugShowCheckedModeBanner: false,
   ));
 }
 
@@ -16,96 +16,78 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String mensagem = "Aguardando localização...";
-  String clima = "";
-  Position? position;
-
+  String clima = "Aguardando localização...";
+  
+  // Controlador para o campo de texto
+  final TextEditingController _cidadeController = TextEditingController();
   final ApiService apiService = ApiService();
 
-  // Função assíncrona que retorna true se a posição for obtida com sucesso
-  Future<bool> getLocation() async {
-    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      setState(() {
-        mensagem = "Serviço de Localização desabilitado";
-      });
-      return false;
-    }
-
-    LocationPermission permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        setState(() {
-          mensagem = "Acesso à Localização negado pelo usuário";
-        });
-        return false;
-      }
-    }
-
-    if (permission == LocationPermission.deniedForever) {
-      setState(() {
-        mensagem = "Permissão negada permanentemente. Altere nas configurações.";
-      });
-      return false;
-    }
-
-    Position pos = await Geolocator.getCurrentPosition();
-    setState(() {
-      position = pos;
-      mensagem = "Lat: ${pos.latitude.toStringAsFixed(4)}, Lon: ${pos.longitude.toStringAsFixed(4)}";
-    });
-    return true;
-  }
-
   void getClima() async {
-    // Aguarda a verificação e obtenção da localização antes de chamar a API
-    bool locationOk = await getLocation();
+    // Verifica se o usuário digitou algo
+    if (_cidadeController.text.trim().isEmpty) {
+      setState(() {
+        clima = "Por favor, digite o nome de uma cidade.";
+      });
+      return;
+    }
 
-    if (!locationOk || position == null) return;
+    setState(() {
+      clima = "Buscando clima...";
+    });
 
     try {
-      final climaAtual = await apiService.getClimaLocation(position!);
+      // Chama a nova função passando o texto digitado
+      final climaAtual = await apiService.getClimaCidade(_cidadeController.text.trim());
+      
       if (climaAtual != null) {
         setState(() {
           final temp = climaAtual["main"]["temp"].toStringAsFixed(1);
           final cidade = climaAtual["name"];
-          clima = "$cidade -- $temp°C";
+          final descricao = climaAtual["weather"][0]["description"]; // Pega a descrição (ex: céu limpo)
+          
+          clima = "$cidade -- $temp°C\n$descricao";
         });
       }
     } catch (e) {
       setState(() {
-        clima = "Erro ao buscar clima";
+        clima = "Erro ao buscar clima. Verifique o nome da cidade.";
       });
     }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    getLocation();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Clima e GPS")),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(mensagem, textAlign: TextAlign.center),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: getClima,
-              child: const Text("Buscar Clima"),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              clima, 
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-          ],
+      appBar: AppBar(title: const Text("Consulta de Clima")),
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Campo de texto para digitar a localização
+              TextField(
+                controller: _cidadeController,
+                decoration: const InputDecoration(
+                  labelText: "Digite o nome da cidade",
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.location_city),
+                ),
+                onSubmitted: (_) => getClima(), // Permite buscar ao apertar Enter
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: getClima,
+                child: const Text("Buscar Clima"),
+              ),
+              const SizedBox(height: 32),
+              Text(
+                clima, 
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
         ),
       ),
     );
