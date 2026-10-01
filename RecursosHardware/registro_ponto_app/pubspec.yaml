@@ -1,0 +1,33 @@
+name: registro_ponto_app
+description: Aplicativo de Registro de Ponto com Geolocalizacao e Biometria (Local).
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  # Geolocalização e Biometria
+  geolocator: ^13.0.2
+  local_auth: ^2.3.0
+
+  # Armazenamento Local (Substitutos do Firebase)
+  sqflite: ^2.3.3
+  path: ^1.9.0
+  shared_preferences: ^2.3.2
+
+  # Utilitários
+  intl: ^0.20.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
