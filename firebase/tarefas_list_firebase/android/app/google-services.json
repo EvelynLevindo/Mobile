@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "11135861600",
+    "project_id": "tarefas-list-evelynlevindo",
+    "storage_bucket": "tarefas-list-evelynlevindo.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:11135861600:android:65cb516f46a92ed7509405",
+        "android_client_info": {
+          "package_name": "com.example.tarefas_list_firebase"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "11135861600-5mdu3f7i2hb4sgnv7d1a6ifaq3gh0v9g.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA-souFsHLfu4_4TiWPiMso5ZdjwptaP84"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "11135861600-5mdu3f7i2hb4sgnv7d1a6ifaq3gh0v9g.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
