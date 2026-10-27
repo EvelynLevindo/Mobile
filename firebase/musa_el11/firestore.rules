@@ -1,0 +1,107 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isUser(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isPlaylistOwner(playlistData) {
+      return isAuthenticated() && request.auth.uid == playlistData.ownerId;
+    }
+
+    function isPlaylistCollaborator(playlistData) {
+      return isAuthenticated() && (request.auth.uid in playlistData.collaborators);
+    }
+
+    function hasPlaylistAccess(playlistData) {
+      return isPlaylistOwner(playlistData) || isPlaylistCollaborator(playlistData);
+    }
+
+    // -------------------------------------------------------------------------
+    // USERS COLLECTION & FAVORITES
+    // -------------------------------------------------------------------------
+    match /users/{userId} {
+      // Authenticated users can read public profile details (e.g. collaborator names)
+      allow read: if isAuthenticated();
+
+      // Only the authenticated user can create or update their own profile document
+      allow create: if isUser(userId)
+        && request.resource.data.uid == userId
+        && request.resource.data.email is string;
+
+      allow update: if isUser(userId)
+        && request.resource.data.uid == userId
+        && request.resource.data.email == resource.data.email;
+
+      allow delete: if false;
+
+      // Personal isolated favorites subcollection for each user
+      match /favorites/{songId} {
+        allow read, write: if isUser(userId);
+      }
+    }
+
+    // -------------------------------------------------------------------------
+    // USER EMAILS LOOKUP (For inviting collaborators safely by email)
+    // -------------------------------------------------------------------------
+    match /user_emails/{email} {
+      // Any authenticated user can look up an email to find a collaborator's UID
+      allow read: if isAuthenticated();
+
+      // Users can only create or update their own email registration
+      allow create, update: if isAuthenticated()
+        && request.resource.data.uid == request.auth.uid;
+
+      allow delete: if false;
+    }
+
+    // -------------------------------------------------------------------------
+    // PLAYLISTS COLLECTION
+    // -------------------------------------------------------------------------
+    match /playlists/{playlistId} {
+      // Read: allowed only for owner and authorized collaborators
+      allow read: if isAuthenticated() && hasPlaylistAccess(resource.data);
+
+      // Create: user must set themselves as ownerId and provide valid fields
+      allow create: if isAuthenticated()
+        && request.resource.data.ownerId == request.auth.uid
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.name.size() <= 100
+        && request.resource.data.collaborators is list;
+
+      // Update:
+      // - Owner can edit name, collaborators, collaboratorEmails, and tracks. Cannot change ownerId.
+      // - Collaborators can ONLY edit tracks. Cannot change ownerId, collaborators, collaboratorEmails, or name.
+      allow update: if isAuthenticated() && (
+        // 1. Owner updates
+        (
+          isPlaylistOwner(resource.data)
+          && request.resource.data.ownerId == resource.data.ownerId
+          && request.resource.data.name is string
+          && request.resource.data.name.size() > 0
+          && request.resource.data.collaborators is list
+        )
+        ||
+        // 2. Collaborator updates (only tracks and optional metadata like updatedAt)
+        (
+          isPlaylistCollaborator(resource.data)
+          && request.resource.data.ownerId == resource.data.ownerId
+          && request.resource.data.name == resource.data.name
+          && request.resource.data.collaborators == resource.data.collaborators
+          && (!('collaboratorEmails' in resource.data) || request.resource.data.collaboratorEmails == resource.data.collaboratorEmails)
+        )
+      );
+
+      // Delete: ONLY the owner can delete the playlist
+      allow delete: if isAuthenticated() && isPlaylistOwner(resource.data);
+    }
+  }
+}
+

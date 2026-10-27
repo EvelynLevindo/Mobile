@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1013920190955",
+    "project_id": "musa-el11",
+    "storage_bucket": "musa-el11.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1013920190955:android:bae751824af52acb0e49ae",
+        "android_client_info": {
+          "package_name": "com.example.musa_el11"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1013920190955-0thptnq6h5qeh2s4uvkgmst182dv60ab.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA4ubusSWMkX2Hc3NJJ7Cl5saATfbW3Nvo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1013920190955-0thptnq6h5qeh2s4uvkgmst182dv60ab.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
